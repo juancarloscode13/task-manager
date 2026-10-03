@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f6f7fa">
+    <title>Taskboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="js/state.js"></script>
+    <script defer src="js/storage.js"></script>
+    <script defer src="js/tasks.js"></script>
+    <script defer src="js/dragdrop.js"></script>
+    <script defer src="js/ui.js"></script>
+    <script defer src="js/app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#inicio" aria-label="Taskboard, inicio">
+          <span class="brand-mark" aria-hidden="true">t</span>
+          <span>taskboard</span>
+        </a>
+        <div class="topbar-actions">
+          <div id="save-status" class="save-status" role="status" aria-live="polite" data-state="idle">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span class="status-label">Sin archivo</span>
+          </div>
+          <button id="back-to-boards-button" class="button button-secondary" type="button" hidden>← Tableros</button>
+          <label class="theme-control" for="theme-select">
+            <span>Tema</span>
+            <select id="theme-select" aria-label="Tema de la aplicación">
+              <option value="system">Sistema</option>
+              <option value="light">Claro</option>
+              <option value="dark">Oscuro</option>
+            </select>
+          </label>
+          <button id="settings-button" class="icon-button" type="button" aria-label="Configuración del tablero" title="Configuración" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Zm9 4.9v-2.2l-2.1-.5a7.4 7.4 0 0 0-.7-1.7l1.1-1.9-1.6-1.6-1.9 1.1a7.4 7.4 0 0 0-1.7-.7L13.6 3h-2.2l-.5 2.1a7.4 7.4 0 0 0-1.7.7L7.3 4.7 5.7 6.3l1.1 1.9a7.4 7.4 0 0 0-.7 1.7L4 10.4v2.2l2.1.5a7.4 7.4 0 0 0 .7 1.7l-1.1 1.9 1.6 1.6 1.9-1.1a7.4 7.4 0 0 0 1.7.7l.5 2.1h2.2l.5-2.1a7.4 7.4 0 0 0 1.7-.7l1.9 1.1 1.6-1.6-1.1-1.9a7.4 7.4 0 0 0 .7-1.7Z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main id="main-content" class="main-content">
+        <section id="file-selection" class="view selection-view" aria-labelledby="file-selection-title">
+          <div class="selection-intro">
+            <p class="eyebrow">ESPACIO DE TRABAJO LOCAL</p>
+            <h1 id="file-selection-title">Elige tu archivo</h1>
+            <p class="board-subtitle">Abre tu data.json para continuar o crea uno nuevo. Tus tableros permanecen en tu dispositivo.</p>
+          </div>
+          <div id="file-api-notice" class="connection-notice" hidden>
+            <div class="notice-icon" aria-hidden="true">↗</div>
+            <div class="notice-copy"><h2 id="file-api-title">Acceso a archivos no disponible</h2><p id="file-api-copy"></p></div>
+          </div>
+          <div class="file-choice-grid">
+            <article class="choice-card">
+              <div class="choice-icon" aria-hidden="true">↗</div>
+              <h2>Abrir archivo existente</h2>
+              <p>Selecciona el archivo <strong>data.json</strong> que ya contiene tus tableros.</p>
+              <button id="open-file-button" class="button button-primary" type="button">Abrir data.json</button>
+            </article>
+            <article class="choice-card">
+              <div class="choice-icon choice-icon-new" aria-hidden="true">＋</div>
+              <h2>Crear archivo nuevo</h2>
+              <p>Crea un archivo vacío donde podrás organizar varios tableros.</p>
+              <button id="create-file-button" class="button button-secondary" type="button">Crear data.json</button>
+            </article>
+          </div>
+        </section>
+
+        <section id="board-selection" class="view selection-view" aria-labelledby="board-selection-title" hidden>
+          <div class="selection-heading">
+            <div>
+              <p class="eyebrow">ARCHIVO LOCAL <span aria-hidden="true">·</span> <span id="selected-file-name">data.json</span></p>
+              <h1 id="board-selection-title">Mis tableros</h1>
+              <p id="board-selection-subtitle" class="board-subtitle">Elige un tablero para abrirlo.</p>
+            </div>
+            <div class="heading-actions selection-actions">
+              <button id="import-button" class="button button-secondary" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
+                Importar JSON
+              </button>
+              <button id="export-button" class="button button-secondary" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0 4 4m-4-4L8 8M5 17v3h14v-3"/></svg>
+                Exportar JSON
+              </button>
+              <button id="create-board-button" class="button button-primary" type="button">＋ Nuevo tablero</button>
+              <button id="change-file-button" class="button button-quiet" type="button">Cambiar archivo</button>
+              <input id="import-file" class="visually-hidden" type="file" accept=".json,application/json" tabindex="-1">
+            </div>
+          </div>
+          <div id="board-cards" class="board-cards" aria-live="polite"></div>
+        </section>
+
+        <section id="board-screen" class="view" aria-label="Tablero actual" hidden>
+          <section id="connection-notice" class="connection-notice" aria-labelledby="connection-title" hidden>
+            <div class="notice-icon" aria-hidden="true">↗</div>
+            <div class="notice-copy"><h2 id="connection-title">Hace falta permiso para guardar</h2><p>Concede acceso de escritura para guardar automáticamente los cambios en data.json.</p></div>
+            <button class="button button-primary" type="button" data-action="connect">Conceder acceso</button>
+          </section>
+          <section class="board-heading" aria-labelledby="board-title">
+            <div>
+              <p class="eyebrow">ESPACIO DE TRABAJO LOCAL</p>
+              <h1 id="board-title">Mi tablero</h1>
+              <p id="board-subtitle" class="board-subtitle">Organiza el trabajo, paso a paso.</p>
+            </div>
+            <div class="heading-actions">
+              <button id="add-task-button" class="button button-primary" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                Nueva tarea
+              </button>
+            </div>
+          </section>
+          <section id="board" class="board" aria-label="Tablero de tareas"></section>
+        </section>
+
+        <div id="error-banner" class="error-banner" role="alert" hidden>
+          <span class="error-icon" aria-hidden="true">!</span>
+          <div><p id="error-message"></p><button id="retry-button" class="text-button" type="button" hidden>Volver a intentar</button></div>
+          <button id="dismiss-error" class="dismiss-button" type="button" aria-label="Cerrar aviso">×</button>
+        </div>
+      </main>
+      <footer class="app-footer"><span>Privado por diseño</span><span class="footer-separator" aria-hidden="true">·</span><span>Los datos permanecen en tu dispositivo</span></footer>
+    </div>
+
+    <dialog id="task-dialog" class="dialog" aria-labelledby="task-dialog-title">
+      <form id="task-form" method="dialog" novalidate>
+        <div class="dialog-header"><div><p class="eyebrow">DETALLES DE TAREA</p><h2 id="task-dialog-title">Nueva tarea</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Cerrar">×</button></div>
+        <input id="task-id" type="hidden">
+        <label class="field-label" for="task-title">Título <span aria-hidden="true">*</span></label>
+        <input id="task-title" class="text-input" name="title" maxlength="120" required autocomplete="off" placeholder="¿Qué hay que hacer?">
+        <label class="field-label" for="task-description">Descripción <span class="optional-label">Opcional</span></label>
+        <textarea id="task-description" class="text-input text-area" name="description" maxlength="1000" rows="4" placeholder="Añade contexto o próximos pasos..."></textarea>
+        <div class="form-row"><div class="field-group"><label class="field-label" for="task-priority">Prioridad</label><select id="task-priority" class="text-input" name="priority"><option value="low">Baja</option><option value="medium" selected>Media</option><option value="high">Alta</option><option value="urgent">Urgente</option></select></div><div class="field-group"><label class="field-label" for="task-column">Columna</label><select id="task-column" class="text-input" name="columnId"></select></div></div>
+        <p id="form-error" class="form-error" role="alert" hidden></p>
+        <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dialog>Cancelar</button><button id="delete-task-button" class="button button-danger" type="button" hidden>Eliminar tarea</button><span class="action-spacer"></span><button id="submit-task-button" class="button button-primary" type="submit">Crear tarea</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="settings-dialog" class="dialog" aria-labelledby="settings-title">
+      <form id="settings-form" method="dialog" novalidate>
+        <div class="dialog-header"><div><p class="eyebrow">PERSONALIZA TU ESPACIO</p><h2 id="settings-title">Configuración</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Cerrar">×</button></div>
+        <label class="field-label" for="board-name">Nombre del tablero</label>
+        <input id="board-name" class="text-input" name="boardTitle" maxlength="80" required>
+        <div id="column-fields" class="column-fields"></div>
+        <p id="settings-error" class="form-error" role="alert" hidden></p>
+        <div class="dialog-actions"><span class="action-spacer"></span><button class="button button-secondary" type="button" data-close-dialog>Cancelar</button><button class="button button-primary" type="submit">Guardar cambios</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="new-board-dialog" class="dialog" aria-labelledby="new-board-title">
+      <form id="new-board-form" method="dialog" novalidate>
+        <div class="dialog-header"><div><p class="eyebrow">NUEVO ESPACIO</p><h2 id="new-board-title">Crear tablero</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Cerrar">×</button></div>
+        <label class="field-label" for="new-board-name">Nombre del tablero</label>
+        <input id="new-board-name" class="text-input" maxlength="80" required autocomplete="off" placeholder="Por ejemplo, Trabajo">
+        <p id="new-board-error" class="form-error" role="alert" hidden></p>
+        <div class="dialog-actions"><span class="action-spacer"></span><button class="button button-secondary" type="button" data-close-dialog>Cancelar</button><button class="button button-primary" type="submit">Crear tablero</button></div>
+      </form>
+    </dialog>
+
+    <template id="column-field-template"><div class="column-field"><label class="field-label"></label><input class="text-input" maxlength="40" required></div></template>
+  </body>
+</html>

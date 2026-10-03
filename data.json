@@ -1,0 +1,77 @@
+{
+  "version": 2,
+  "boards": [
+    {
+      "id": "board-001",
+      "settings": {
+        "boardTitle": "Estudios"
+      },
+      "columns": [
+        {
+          "id": "todo",
+          "name": "Por hacer"
+        },
+        {
+          "id": "in-progress",
+          "name": "En proceso"
+        },
+        {
+          "id": "testing",
+          "name": "Testing"
+        },
+        {
+          "id": "done",
+          "name": "Completado"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "122022a1-c5b8-4212-b024-446ac2c4fbd6",
+          "title": "Estudiar TFG",
+          "description": "Crear contexto para la creación del tfg, para enseñarsela a mi compañero",
+          "priority": "high",
+          "columnId": "in-progress",
+          "order": 0,
+          "createdAt": "2026-10-03T21:52:03.636Z",
+          "updatedAt": "2026-10-03T21:54:02.275Z"
+        }
+      ]
+    },
+    {
+      "id": "board-833fcce9-709b-42d5-a611-915658841a81",
+      "settings": {
+        "boardTitle": "Personal"
+      },
+      "columns": [
+        {
+          "id": "todo",
+          "name": "Por hacer"
+        },
+        {
+          "id": "in-progress",
+          "name": "En proceso"
+        },
+        {
+          "id": "testing",
+          "name": "Testing"
+        },
+        {
+          "id": "done",
+          "name": "Completado"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "001f9621-4743-4c17-8664-4358f1d84125",
+          "title": "Agregar contexto a mi personaje de la campaña",
+          "description": "Crear un contexto chulo, con una historia de trasfondo",
+          "priority": "medium",
+          "columnId": "todo",
+          "order": 0,
+          "createdAt": "2026-10-03T22:52:21.321Z",
+          "updatedAt": "2026-10-03T22:52:29.245Z"
+        }
+      ]
+    }
+  ]
+}
