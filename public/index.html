@@ -23,7 +23,7 @@
         <div class="topbar-actions">
           <div id="save-status" class="save-status" role="status" aria-live="polite" data-state="idle">
             <span class="status-dot" aria-hidden="true"></span>
-            <span class="status-label">Sin archivo</span>
+            <span class="status-label">Conectando...</span>
           </div>
           <button id="back-to-boards-button" class="button button-secondary" type="button" hidden>← Tableros</button>
           <label class="theme-control" for="theme-select">
@@ -41,36 +41,10 @@
       </header>
 
       <main id="main-content" class="main-content">
-        <section id="file-selection" class="view selection-view" aria-labelledby="file-selection-title">
-          <div class="selection-intro">
-            <p class="eyebrow">ESPACIO DE TRABAJO LOCAL</p>
-            <h1 id="file-selection-title">Elige tu archivo</h1>
-            <p class="board-subtitle">Abre tu data.json para continuar o crea uno nuevo. Tus tableros permanecen en tu dispositivo.</p>
-          </div>
-          <div id="file-api-notice" class="connection-notice" hidden>
-            <div class="notice-icon" aria-hidden="true">↗</div>
-            <div class="notice-copy"><h2 id="file-api-title">Acceso a archivos no disponible</h2><p id="file-api-copy"></p></div>
-          </div>
-          <div class="file-choice-grid">
-            <article class="choice-card">
-              <div class="choice-icon" aria-hidden="true">↗</div>
-              <h2>Abrir archivo existente</h2>
-              <p>Selecciona el archivo <strong>data.json</strong> que ya contiene tus tableros.</p>
-              <button id="open-file-button" class="button button-primary" type="button">Abrir data.json</button>
-            </article>
-            <article class="choice-card">
-              <div class="choice-icon choice-icon-new" aria-hidden="true">＋</div>
-              <h2>Crear archivo nuevo</h2>
-              <p>Crea un archivo vacío donde podrás organizar varios tableros.</p>
-              <button id="create-file-button" class="button button-secondary" type="button">Crear data.json</button>
-            </article>
-          </div>
-        </section>
-
         <section id="board-selection" class="view selection-view" aria-labelledby="board-selection-title" hidden>
           <div class="selection-heading">
             <div>
-              <p class="eyebrow">ARCHIVO LOCAL <span aria-hidden="true">·</span> <span id="selected-file-name">data.json</span></p>
+              <p class="eyebrow">ALMACENAMIENTO LOCAL</p>
               <h1 id="board-selection-title">Mis tableros</h1>
               <p id="board-selection-subtitle" class="board-subtitle">Elige un tablero para abrirlo.</p>
             </div>
@@ -84,7 +58,6 @@
                 Exportar JSON
               </button>
               <button id="create-board-button" class="button button-primary" type="button">＋ Nuevo tablero</button>
-              <button id="change-file-button" class="button button-quiet" type="button">Cambiar archivo</button>
               <input id="import-file" class="visually-hidden" type="file" accept=".json,application/json" tabindex="-1">
             </div>
           </div>
@@ -92,11 +65,6 @@
         </section>
 
         <section id="board-screen" class="view" aria-label="Tablero actual" hidden>
-          <section id="connection-notice" class="connection-notice" aria-labelledby="connection-title" hidden>
-            <div class="notice-icon" aria-hidden="true">↗</div>
-            <div class="notice-copy"><h2 id="connection-title">Hace falta permiso para guardar</h2><p>Concede acceso de escritura para guardar automáticamente los cambios en data.json.</p></div>
-            <button class="button button-primary" type="button" data-action="connect">Conceder acceso</button>
-          </section>
           <section class="board-heading" aria-labelledby="board-title">
             <div>
               <p class="eyebrow">ESPACIO DE TRABAJO LOCAL</p>

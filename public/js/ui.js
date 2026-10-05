@@ -50,7 +50,6 @@
   }
 
   function setScreen(screen) {
-    $('#file-selection').hidden = screen !== 'FILE_SELECTION';
     $('#board-selection').hidden = screen !== 'BOARD_SELECTION';
     $('#board-screen').hidden = screen !== 'BOARD';
     $('#back-to-boards-button').hidden = screen !== 'BOARD';
@@ -58,37 +57,25 @@
     if (screen !== 'BOARD') document.title = 'Taskboard';
   }
 
-  function renderFileSelection(options) {
-    const notice = $('#file-api-notice');
-    notice.hidden = Boolean(options.available);
-    $('#open-file-button').disabled = !options.available || Boolean(options.loading);
-    $('#create-file-button').disabled = !options.available || Boolean(options.loading);
-    if (!options.available) {
-      if (options.secureContext === false) {
-        $('#file-api-title').textContent = 'Abre la aplicación en un contexto seguro';
-        $('#file-api-copy').textContent = 'El selector de archivos requiere HTTPS o localhost. En un contexto seguro, este navegador también debe ofrecer File System Access API.';
-      } else {
-        $('#file-api-title').textContent = 'Este navegador no permite acceso directo a archivos';
-        $('#file-api-copy').textContent = 'No es un problema de permisos. Zen/Firefox no implementa los selectores de la File System Access API que permiten guardar data.json automáticamente. Abre la aplicación en Chrome o Edge para usar el guardado directo.';
-      }
-    }
-    setSaveStatus(options.available ? 'idle' : 'error', options.loading ? 'Cargando archivo…' : (options.available ? 'Selecciona un archivo' : 'API no disponible'));
-  }
-
   function renderBoardSelection(fileData, options) {
     const cards = $('#board-cards');
     const boards = fileData.boards;
-    $('#selected-file-name').textContent = options.fileName || 'data.json';
-    $('#board-selection-subtitle').textContent = boards.length
-      ? boards.length + (boards.length === 1 ? ' tablero en este archivo.' : ' tableros en este archivo.')
-      : 'Este archivo todavía no tiene tableros. Crea uno para empezar.';
+    $('#board-selection-subtitle').textContent = options.loading
+      ? 'Conectando con el servidor local…'
+      : (!options.ready
+        ? 'No se han podido cargar los tableros. Comprueba el servidor local e inténtalo de nuevo.'
+        : (boards.length
+          ? boards.length + (boards.length === 1 ? ' tablero guardado localmente.' : ' tableros guardados localmente.')
+          : 'Todavía no hay tableros. Crea uno para empezar.'));
     $('#create-board-button').disabled = !options.ready;
-    $('#change-file-button').disabled = !options.available || Boolean(options.loading);
     $('#import-button').disabled = !options.ready;
-    $('#export-button').disabled = false;
+    $('#export-button').disabled = !options.ready;
     cards.replaceChildren();
     if (boards.length === 0) {
-      cards.append(element('div', 'empty-boards', 'Todavía no hay tableros. Crea uno con las columnas iniciales.'));
+      const message = options.loading
+        ? 'Cargando tus tableros…'
+        : (!options.ready ? 'Los tableros aparecerán cuando el servidor local esté disponible.' : 'Todavía no hay tableros. Crea uno con las columnas iniciales.');
+      cards.append(element('div', 'empty-boards', message));
       return;
     }
     const fragment = document.createDocumentFragment();
@@ -110,18 +97,8 @@
   }
 
   function setConnection(options) {
-    const notice = $('#connection-notice');
-    const show = options.screen === 'BOARD' && !options.ready && Boolean(options.connected);
-    notice.hidden = !show;
     $('#add-task-button').disabled = !options.ready;
     $('#settings-button').disabled = !options.ready;
-    if (show) {
-      $('#connection-title').textContent = options.needsPermission ? 'Hace falta permiso para guardar' : 'El tablero está en modo de solo lectura';
-      $('.notice-copy p', notice).textContent = options.needsPermission
-        ? 'Concede acceso de escritura para guardar automáticamente los cambios en data.json.'
-        : 'Conecta de nuevo data.json para modificar y guardar este tablero.';
-      $('[data-action="connect"]', notice).textContent = options.needsPermission ? 'Conceder acceso' : 'Conectar archivo';
-    }
   }
 
   function dateLabel(value) {
@@ -206,7 +183,7 @@
       list.setAttribute('role', 'list');
       list.dataset.columnId = column.id;
       tasks.forEach(function (task, index) { list.append(renderTask(task, board.columns, ready, index, tasks.length)); });
-      const emptyMessage = ready ? 'Suelta aquí una tarea o crea una nueva' : 'Concede acceso para modificar este tablero';
+      const emptyMessage = ready ? 'Suelta aquí una tarea o crea una nueva' : 'Conecta con el servidor local para modificar este tablero';
       const empty = element('div', 'empty-column', emptyMessage);
       empty.setAttribute('role', 'presentation');
       empty.hidden = tasks.length > 0;
@@ -315,12 +292,8 @@
   function bind(handlers) {
     initializeTheme();
     themeSelect.addEventListener('change', function () { setTheme(themeSelect.value); });
-    $('#open-file-button').addEventListener('click', function () { safely(handlers.openFile); });
-    $('#create-file-button').addEventListener('click', function () { safely(handlers.createFile); });
-    $('#change-file-button').addEventListener('click', function () { safely(handlers.changeFile); });
     $('#create-board-button').addEventListener('click', openNewBoardDialog);
     $('#back-to-boards-button').addEventListener('click', handlers.backToBoards);
-    $('[data-action="connect"]').addEventListener('click', function () { safely(handlers.connect); });
     $('#retry-button').addEventListener('click', function () { safely(handlers.retry); });
     $('#dismiss-error').addEventListener('click', clearError);
     $('#settings-button').addEventListener('click', function () { openSettingsDialog(handlers.getBoard()); });
@@ -352,13 +325,15 @@
 
     $('#new-board-form').addEventListener('submit', function (event) {
       event.preventDefault();
-      try {
-        handlers.createBoard($('#new-board-name').value);
-        $('#new-board-dialog').close();
-      } catch (error) {
+      safely(async function () {
+        try {
+          await handlers.createBoard($('#new-board-name').value);
+          $('#new-board-dialog').close();
+        } catch (error) {
         $('#new-board-error').textContent = error.message || String(error);
         $('#new-board-error').hidden = false;
-      }
+        }
+      });
     });
 
     $('#board').addEventListener('click', function (event) {
@@ -436,7 +411,6 @@
   global.Taskboard.ui = {
     bind: bind,
     setScreen: setScreen,
-    renderFileSelection: renderFileSelection,
     renderBoardSelection: renderBoardSelection,
     renderBoard: renderBoard,
     setConnection: setConnection,

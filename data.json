@@ -33,7 +33,27 @@
           "columnId": "in-progress",
           "order": 0,
           "createdAt": "2026-10-03T21:52:03.636Z",
-          "updatedAt": "2026-10-03T21:54:02.275Z"
+          "updatedAt": "2026-10-05T11:51:53.549Z"
+        },
+        {
+          "id": "d741a0a0-cad8-41ad-aab7-bb654cf0477c",
+          "title": "Estudiar pal examen",
+          "description": "estudiar mucho",
+          "priority": "high",
+          "columnId": "in-progress",
+          "order": 1,
+          "createdAt": "2026-10-03T23:26:47.762Z",
+          "updatedAt": "2026-10-05T11:51:53.549Z"
+        },
+        {
+          "id": "15ecb6b4-de15-4461-b34c-8e88503f1db3",
+          "title": "Ver si el server funciona",
+          "description": "",
+          "priority": "urgent",
+          "columnId": "testing",
+          "order": 0,
+          "createdAt": "2026-10-05T11:52:11.013Z",
+          "updatedAt": "2026-10-05T11:52:36.875Z"
         }
       ]
     },
@@ -65,11 +85,21 @@
           "id": "001f9621-4743-4c17-8664-4358f1d84125",
           "title": "Agregar contexto a mi personaje de la campaña",
           "description": "Crear un contexto chulo, con una historia de trasfondo",
-          "priority": "medium",
-          "columnId": "todo",
+          "priority": "urgent",
+          "columnId": "in-progress",
           "order": 0,
           "createdAt": "2026-10-03T22:52:21.321Z",
-          "updatedAt": "2026-10-03T22:52:29.245Z"
+          "updatedAt": "2026-10-05T11:56:55.998Z"
+        },
+        {
+          "id": "c5e30189-f65f-485c-b730-1fbf68688a5d",
+          "title": "Estudiar Go",
+          "description": "construir mi chatbot",
+          "priority": "low",
+          "columnId": "todo",
+          "order": 0,
+          "createdAt": "2026-10-05T11:58:10.743Z",
+          "updatedAt": "2026-10-05T11:58:10.743Z"
         }
       ]
     }
